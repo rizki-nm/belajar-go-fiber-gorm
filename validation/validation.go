@@ -5,12 +5,12 @@ import (
 	"github.com/rizki-nm/belajar-go-fiber-gorm/model/web"
 )
 
-func Validate(user web.CreateUserRequest) []*web.ErrorValidateResponse {
+func Validate(request any) []*web.ErrorValidateResponse {
 	var validate = validator.New()
 
 	var errors []*web.ErrorValidateResponse
 
-	err := validate.Struct(user)
+	err := validate.Struct(request)
 
 	if err != nil {
 		for _, err := range err.(validator.ValidationErrors) {

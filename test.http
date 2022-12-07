@@ -9,4 +9,22 @@ Content-Type: application/json
 Accept: application/json
 
 {
+  "name": "testcreate",
+  "email": "salah",
+  "address": "Pemalang"
+}
+
+### Get User By Id
+
+GET http://localhost:3000/api/v1/user/7
+Accept: application/json
+
+### Update User Email By Id
+
+PUT http://localhost:3000/api/v1/user/7
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "update@example.com"
 }

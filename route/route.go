@@ -11,5 +11,7 @@ func RouteInit(app *fiber.App) {
 
 	v1 := api.Group("/v1")
 	v1.Get("/user", controller.GetAll)
+	v1.Get("/user/:id", controller.GetById)
 	v1.Post("/user", controller.Create)
+	v1.Put("/user/:id", controller.Update)
 }

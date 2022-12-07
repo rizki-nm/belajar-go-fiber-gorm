@@ -28,3 +28,9 @@ Accept: application/json
 {
   "email": "update@example.com"
 }
+
+### Delete User By Id
+
+DELETE http://localhost:3000/api/v1/user/4
+Content-Type: application/json
+Accept: application/json

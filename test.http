@@ -1,0 +1,12 @@
+### Get All Users
+
+GET http://localhost:3000/api/v1/user
+Accept: application/json
+
+### Create New User
+POST http://localhost:3000/api/v1/user
+Content-Type: application/json
+Accept: application/json
+
+{
+}

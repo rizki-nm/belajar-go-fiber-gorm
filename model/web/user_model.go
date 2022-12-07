@@ -6,10 +6,14 @@ type CreateUserRequest struct {
 	Address string `json:"address" validate:"required"`
 }
 
-type GetProductResponse struct {
+type GetUserResponse struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Address string `json:"address"`
+}
+
+type UpdateUserEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
 
 type ErrorValidateResponse struct {

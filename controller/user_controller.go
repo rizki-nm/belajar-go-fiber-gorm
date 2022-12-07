@@ -140,3 +140,34 @@ func Update(ctx *fiber.Ctx) error {
 		Data:   user,
 	})
 }
+
+func Delete(ctx *fiber.Ctx) error {
+	userId := ctx.Params("id")
+
+	var user entity.User
+	result := database.DB.First(&user, "id = ?", userId)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusNotFound,
+			Status:  "Not Found",
+			Message: "User not found",
+		})
+	}
+
+	result = database.DB.Delete(&user)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusInternalServerError,
+			Status:  "Internal Server Error",
+			Message: "Failed delete user",
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(web.WebResponseSuccess{
+		Code:   fiber.StatusOK,
+		Status: "OK",
+		Data:   "User was deleted",
+	})
+}

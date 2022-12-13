@@ -6,6 +6,7 @@ import (
 	"github.com/rizki-nm/belajar-go-fiber-gorm/exception"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/model/entity"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/model/web"
+	"github.com/rizki-nm/belajar-go-fiber-gorm/utils"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/validation"
 	"log"
 )
@@ -46,6 +47,12 @@ func Create(ctx *fiber.Ctx) error {
 		Email:   user.Email,
 		Address: user.Address,
 	}
+
+	hashedPassword, err := utils.HashPassword(user.Password)
+
+	exception.PanicIfNeeded(err)
+
+	newUser.Password = hashedPassword
 
 	response := database.DB.Create(&newUser)
 

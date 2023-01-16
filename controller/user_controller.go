@@ -6,6 +6,7 @@ import (
 	"github.com/rizki-nm/belajar-go-fiber-gorm/exception"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/model/entity"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/model/web"
+	"github.com/rizki-nm/belajar-go-fiber-gorm/utils"
 	"github.com/rizki-nm/belajar-go-fiber-gorm/validation"
 	"log"
 )
@@ -47,6 +48,12 @@ func Create(ctx *fiber.Ctx) error {
 		Address: user.Address,
 	}
 
+	hashedPassword, err := utils.HashPassword(user.Password)
+
+	exception.PanicIfNeeded(err)
+
+	newUser.Password = hashedPassword
+
 	response := database.DB.Create(&newUser)
 
 	if response.Error != nil {
@@ -63,4 +70,111 @@ func Create(ctx *fiber.Ctx) error {
 		Data:   newUser,
 	})
 
+}
+
+func GetById(ctx *fiber.Ctx) error {
+	userId := ctx.Params("id")
+
+	var user entity.User
+	result := database.DB.First(&user, "id = ?", userId)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusNotFound,
+			Status:  "Not Found",
+			Message: "User not found",
+		})
+	}
+
+	response := web.GetUserResponse{
+		Name:    user.Name,
+		Email:   user.Email,
+		Address: user.Address,
+	}
+
+	return ctx.Status(fiber.StatusFound).JSON(web.WebResponseSuccess{
+		Code:   fiber.StatusFound,
+		Status: "Found",
+		Data:   response,
+	})
+
+}
+
+func Update(ctx *fiber.Ctx) error {
+	userRequest := new(web.UpdateUserEmailRequest)
+	err := ctx.BodyParser(userRequest)
+
+	exception.PanicIfNeeded(err)
+
+	errors := validation.Validate(*userRequest)
+	if errors != nil {
+		return ctx.Status(fiber.StatusBadRequest).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusBadRequest,
+			Status:  "Bad Request",
+			Message: errors,
+		})
+	}
+
+	userId := ctx.Params("id")
+
+	var user entity.User
+	result := database.DB.First(&user, "id = ?", userId)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusNotFound,
+			Status:  "Not Found",
+			Message: "User not found",
+		})
+	}
+
+	// Update
+	user.Email = userRequest.Email
+
+	result = database.DB.Save(&user)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusInternalServerError,
+			Status:  "Internal Server Error",
+			Message: "Failed update email",
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(web.WebResponseSuccess{
+		Code:   fiber.StatusOK,
+		Status: "OK",
+		Data:   user,
+	})
+}
+
+func Delete(ctx *fiber.Ctx) error {
+	userId := ctx.Params("id")
+
+	var user entity.User
+	result := database.DB.First(&user, "id = ?", userId)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusNotFound).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusNotFound,
+			Status:  "Not Found",
+			Message: "User not found",
+		})
+	}
+
+	result = database.DB.Delete(&user)
+
+	if result.Error != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(web.WebResponseFailed{
+			Code:    fiber.StatusInternalServerError,
+			Status:  "Internal Server Error",
+			Message: "Failed delete user",
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(web.WebResponseSuccess{
+		Code:   fiber.StatusOK,
+		Status: "OK",
+		Data:   "User was deleted",
+	})
 }

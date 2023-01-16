@@ -1,15 +1,20 @@
 package web
 
 type CreateUserRequest struct {
-	Name    string `json:"name" validate:"required"`
-	Email   string `json:"email" validate:"required,email"`
-	Address string `json:"address" validate:"required"`
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=5"`
+	Address  string `json:"address" validate:"required"`
 }
 
-type GetProductResponse struct {
+type GetUserResponse struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Address string `json:"address"`
+}
+
+type UpdateUserEmailRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
 
 type ErrorValidateResponse struct {

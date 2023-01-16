@@ -2,11 +2,53 @@
 
 GET http://localhost:3000/api/v1/user
 Accept: application/json
+X-TOKEN: {{auth_token}}
 
 ### Create New User
+
 POST http://localhost:3000/api/v1/user
 Content-Type: application/json
 Accept: application/json
 
 {
+  "name": "admin",
+  "email": "admin@test.com",
+  "password": "secret",
+  "address": "Pemalang"
 }
+
+### Get User By Id
+
+GET http://localhost:3000/api/v1/user/8
+Accept: application/json
+
+### Update User Email By Id
+
+PUT http://localhost:3000/api/v1/user/7
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "update@example.com"
+}
+
+### Delete User By Id
+
+DELETE http://localhost:3000/api/v1/user/4
+Content-Type: application/json
+Accept: application/json
+
+### Login
+
+POST http://localhost:3000/api/v1/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@test.com",
+  "password": "secret"
+}
+
+> {%
+    client.global.set("auth_token", response.body.token);
+%}
